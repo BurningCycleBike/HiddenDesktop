@@ -66,3 +66,4 @@ The HiddenDesktop BOF was tested using [example.profile](example.profile) on the
 * Heavily based on [TinyNuke](https://github.com/rossja/TinyNuke)
 * Included improvements/fixes from [Meltedd/HVNC](https://github.com/Meltedd/HVNC)
 * Uses Beacon job interface and project structure from [SecIdiot/netntlm](https://github.com/SolomonSklash/netntlm)
+* Mingw64 and Mingw32 download at [Winlibs.com](https://winlibs.com/)
