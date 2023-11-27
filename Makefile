@@ -8,12 +8,13 @@ CC_x64  	:= $(CL_X64_PATH)gcc
 CC_x86		:= $(CL_X86_PATH)gcc
 LD_x64  	:= $(LD_X64_PATH)ld
 LD_x86		:= $(LD_X86_PATH)ld
-RC_x64  	:= x86_64-w64-mingw32-windres
+RC_x64  	:= $(CL_X64_PATH)windres
 NASM_x64	:= nasm -f win64
 NASM_x86	:= nasm -f win32
 
 NAME 		:= HiddenDesktop
-UI  		:= HVNC\ Server
+SERVER_OUT	:= HVNC
+UI  		:= $(SERVER_OUT)\Server
 
 CLIENT 		:= client
 SERVER 		:= server
@@ -58,20 +59,21 @@ x86 x64:
 launchers: $(LAUNCHERS)
 
 server:
-	# HVNC Server and UI
+	@ if not exist $(OUT)\$(SERVER_OUT) (mkdir $(OUT)\$(SERVER_OUT))
 	@ $(RC_x64) $(SERVER)/resource.rc -O coff -o $(OUT)/resources.x64.o
-	@ $(CC_x64) $(SERVER)/*.c $(OUT)/resources.x64.o -o $(OUT)/$(UI).exe -static -Wall -Werror -lws2_32 -luser32 -lgdi32 -I$(SERVER)
-	@ rm $(OUT)/resources.x64.o 2>/dev/null || true
+	@ $(CC_x64) $(SERVER)/*.c $(OUT)/resources.x64.o -o $(OUT)\$(UI).exe -static -Wall -Werror -lws2_32 -luser32 -lgdi32 -I$(SERVER)
+	@ del $(OUT)\resources.x64.o 
 
 .c.o:
 	@ $(CC_$(ARCH)) -o $(OUT)/$(basename $(notdir $@)).$(ARCH).o -c $< $(BFFLAGS)
 
 clean:
-	@ rm $(OUT)/*.o 2>/dev/null || true
-	@ rm $(OUT)/*.exe 2>/dev/null || true
-	@ rm $(OUT)/*.bin 2>/dev/null || true
-	@ rm $(OUT)/$(NAME).zip 2>/dev/null || true
+	@ del $(OUT)\*.o 
+	@ del $(OUT)\*.exe 
+	@ del $(OUT)\*.bin 
+	@ del $(OUT)\$(NAME).zip 
+	@ del $(OUT)\$(UI).exe
 
 zip:
-	# Release Zip
+	
 	@ zip -j $(OUT)/$(NAME).zip $(OUT)/*.x86.o $(OUT)/*.x64.o $(OUT)/$(UI).exe $(OUT)/$(NAME).cna 1>/dev/null
